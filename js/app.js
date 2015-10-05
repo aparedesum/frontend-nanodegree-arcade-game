@@ -1,16 +1,24 @@
+//Super class
+var Character = function(x, y, sprite) {
+    this.x = x;
+    this.y = y;
+    this.sprite = sprite;
+}
+
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.x = 0;
-    this.y = getY();
+
+    Character.call(this, x, y, 'images/enemy-bug.png');
     this.speed = getSpeed();
-    this.sprite = 'images/enemy-bug.png';
 };
 
+Enemy.prototype = Object.create(Character.prototype);
+Enemy.prototype.constructor = Enemy;
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
@@ -31,66 +39,59 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Enemy.prototype.checkCollision = function (player){
-    
-    var result = true;
-    
-    if (this.x + 100 <= player.x) {
-           result = false;
-    }else if (this.y + 80 <= player.y) {
-         result = false;
-    } else if (this.x >= player.x + 100) {
-         result = false;
-    } else if (this.y >= player.y + 80) {
-         result = false;
+Enemy.prototype.checkCollision = function(player) {
+
+    var result = false;
+
+    //Axis-Aligned Bounding Box
+    if (this.x < player.x + 100 &&
+        this.x + 100 > player.x &&
+        this.y < player.y + 80 &&
+        80 + this.y > player.y) {
+        result = true;
     }
 
-    if(result){
-        player.x = 202.5;
-        player.y = 380;
-        
-        if(player.score > 0) {
-            player.score -= 10;            
-        }        
+    if (result) {
+        player.resetInitialPosition();
+        if (player.score > 0) {
+            player.addScore(-10);
+        }
     }
-}
-
-
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 
-var Player = function () {
-    this.sprite = 'images/char-boy.png';    
-    this.x = 202.5;
-    this.y = 380;
+var Player = function(x, y) {
+    Character.call(this, x, y, 'images/char-boy.png');
     this.score = 0;
 };
 
-Player.prototype.update = function(){
+Player.prototype = Object.create(Character.prototype);
+Player.prototype.constructor = Enemy;
+Player.prototype.update = function() {
     //It prevents from moving beyond the boundaries    
-    if (this.y > 380 ) {
+    if (this.y > 380) {
         this.y = 380;
     }
 
     if (this.x > 500) {
         this.x -= 100;
     }
-    
+
     if (this.x < 0) {
         this.x += 100;
-    }    
+    }
 
     // When y = 0, it means you win and reset to initial position.
     if (this.y < 50) {
-        this.x = 202.5;
-        this.y = 380; 
-        this.score += 100;
+        this.resetInitialPosition();
+        this.addScore(100);
     }
 };
 
-Player.prototype.render = function(){
+Player.prototype.render = function() {
     ctx.font = '30pt Impact';
     ctx.textAlign = 'center';
     ctx.strokeStyle = 'black';
@@ -101,7 +102,16 @@ Player.prototype.render = function(){
 
     ctx.clearRect(0, 0, 200, 50);
     ctx.fillText("Score: " + this.score, 100, 40);
-    ctx.strokeText("Score: " + this.score , 100, 40);
+    ctx.strokeText("Score: " + this.score, 100, 40);
+};
+
+Player.prototype.resetInitialPosition = function() {
+    this.x = 202.5;
+    this.y = 380;
+};
+
+Player.prototype.addScore = function(value) {
+    this.score += value;
 };
 
 Player.prototype.handleInput = function(keyValue) {
@@ -116,7 +126,7 @@ Player.prototype.handleInput = function(keyValue) {
     }
     if (keyValue == 'down') {
         this.y += 80;
-    }    
+    }
 };
 
 
@@ -124,15 +134,15 @@ Player.prototype.handleInput = function(keyValue) {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var player = new Player();
+var player = new Player(202.5, 380);
 
-var allEnemies = new Array();
-allEnemies.push(new Enemy());
-allEnemies.push(new Enemy());
-allEnemies.push(new Enemy()) ;
+var allEnemies = [];
+for (var i = 0; i < 3; i++) {
+    allEnemies.push(new Enemy(0, getY()));
+}
 
 function getY() {
-    return (Math.floor(Math.random() * 3) * 80 ) + 60;
+    return (Math.floor(Math.random() * 3) * 80) + 60;
 }
 
 function getSpeed() {
