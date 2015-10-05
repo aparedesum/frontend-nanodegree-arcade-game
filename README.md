@@ -1,10 +1,14 @@
-frontend-nanodegree-arcade-game
-===============================
+Welcome to the Arcade Game - SuckBugs.
 
-Students should use this rubric: https://www.udacity.com/course/viewer#!/c-ud015/l-3072058665/m-3072588797
+Here the rules:
 
-for self-checking their submission.
+How to Start Game:
+1. Download code
+2. Open index.html
+3. Enjoy the game.
 
-Resources:
-http://www.kirupa.com/html5/animating_with_requestAnimationFrame.htm
-http://www.project-cyan.com/2011-09-deteccion-colisiones-parte-1-rectangulos/
+How to play:
+
+1. Use arrow keys to control our hero.
+2. Get to the water line and you will get 100 points.
+3. Don't touch the bugs or you will start again and will lose 10 points.
