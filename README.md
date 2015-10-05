@@ -3,11 +3,14 @@ Welcome to the Arcade Game - SuckBugs.
 Here the rules:
 
 How to Start Game:
+
+
 1. Download code
 
 2. Open index.html
 
 3. Enjoy the game.
+
 
 
 
